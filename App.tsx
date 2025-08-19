@@ -1,9 +1,8 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
-import { Phone, Instagram, Mail, Star, Sparkles, Wand2, Loader, Award, Trophy, Heart, Send, Menu, X, Bot, Palette, Brush, Frown, Quote, BookText, FlaskConical, Lock, Trash2, PlusCircle, Copy, Check } from "lucide-react";
-import type { NavLinkItem, GalleryItem, ServiceItem, TestimonialItem, CakeIdea } from './types';
-import { palette, navLinks, galleryItems, serviceItems, testimonialItems, aiStudioOptions, imagePaths } from './constants';
-import { generateCakeIdeas } from './services/geminiService';
+import { Phone, Instagram, Mail, Star, Sparkles, Loader, Award, Trophy, Heart, Send, Menu, X, Quote, Lock, Trash2, PlusCircle, Copy, Check } from "lucide-react";
+import type { NavLinkItem, GalleryItem, ServiceItem, TestimonialItem } from './types';
+import { palette, navLinks, galleryItems, serviceItems, testimonialItems, imagePaths } from './constants';
 
 // --- STYLES, ANIMATIONS & HOOKS ---
 
@@ -367,9 +366,9 @@ const Home = () => {
                         من فرزین هستم، هنرمند و طراح کیک‌های سفارشی. هر کیک، داستانی است از طعم و زیبایی که برای شیرین‌تر کردن لحظات خاص شما خلق می‌شود.
                     </motion.p>
                     <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} transition={{ delay: 1.2, duration: 0.5 }}>
-                        <PrimaryButton href="#ai-studio">
-                            <Wand2 />
-                            کیک رویایی خود را طراحی کنید
+                        <PrimaryButton href="#portfolio">
+                            <Award />
+                            نمونه کارهای من را ببینید
                         </PrimaryButton>
                     </motion.div>
                 </motion.div>
@@ -501,123 +500,6 @@ const Portfolio = () => {
             </AnimatePresence>
         </>
     );
-};
-
-const AIStudio = () => {
-  const [occasion, setOccasion] = useState("");
-  const [style, setStyle] = useState("");
-  const [color, setColor] = useState("");
-  const [ideas, setIdeas] = useState<CakeIdea[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const canGenerate = occasion && style && color;
-
-  const handleGenerate = useCallback(async () => {
-    if (!canGenerate) return;
-    setIsLoading(true);
-    setError(null);
-    setIdeas([]);
-    const prompt = `یک طرح کیک خلاقانه برای مراسم "${occasion}" با سبک "${style}" و ترکیب رنگ "${color}" به من پیشنهاد بده.`;
-    try {
-      const result = await generateCakeIdeas(prompt);
-      setIdeas(result);
-    } catch (e: any) {
-      setError(e.message || "یک خطای ناشناخته رخ داد.");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [occasion, style, color, canGenerate]);
-
-  const StudioSelector = ({ icon: Icon, label, options, value, onChange }: { icon: React.ElementType; label: string; options: string[]; value: string; onChange: (value: string) => void; }) => (
-    <div className="flex flex-col gap-3">
-        <label className="flex items-center gap-2 text-lg font-semibold" style={{color: palette.textPrimary}}>
-            <Icon className="w-6 h-6" style={{color: palette.primary}} />
-            {label}
-        </label>
-        <div className="flex flex-wrap gap-2">
-            {options.map(opt => (
-                <PillButton key={opt} onClick={() => onChange(opt)} selected={value === opt}>{opt}</PillButton>
-            ))}
-        </div>
-    </div>
-  );
-  
-  return (
-    <Section id="ai-studio">
-        <SectionTitle icon={Wand2} title="طراح هوشمند" subtitle="با کمک هوش مصنوعی، ایده‌ اولیه کیک رویایی خود را پیدا کنید" />
-        <Card>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-                <StudioSelector icon={Bot} label="مناسبت خود را انتخاب کنید" options={aiStudioOptions.occasions} value={occasion} onChange={setOccasion} />
-                <StudioSelector icon={Brush} label="سبک مورد نظر خود را انتخاب کنید" options={aiStudioOptions.styles} value={style} onChange={setStyle} />
-                <StudioSelector icon={Palette} label="پالت رنگی خود را انتخاب کنید" options={aiStudioOptions.colors} value={color} onChange={setColor} />
-            </div>
-            <div className="text-center">
-                <motion.button
-                    onClick={handleGenerate}
-                    disabled={!canGenerate || isLoading}
-                    className="px-12 py-4 rounded-full text-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
-                    style={{ background: palette.primary, color: palette.background, boxShadow: `0 8px 15px -4px ${palette.primary}44` }}
-                    whileHover={!canGenerate || isLoading ? {} : { scale: 1.05, boxShadow: `0 10px 20px -4px ${palette.primary}66`}}
-                    whileTap={!canGenerate || isLoading ? {} : { scale: 0.95 }}
-                >
-                    {isLoading ? "در حال خلق ایده..." : "تولید ایده کن"}
-                </motion.button>
-            </div>
-        </Card>
-        <AnimatePresence>
-            {isLoading && (
-                <motion.div initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} exit={{opacity: 0, y: -20}} className="text-center mt-8 flex justify-center items-center gap-3 text-lg" style={{color: palette.textPrimary}}>
-                    <Loader className="animate-spin w-6 h-6" style={{color: palette.primary}} />
-                    طراح هوشمند در حال آماده‌سازی ایده‌هاست...
-                </motion.div>
-            )}
-            {error && (
-                 <motion.div initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} exit={{opacity: 0, y: -20}} className="text-center mt-8 flex justify-center items-center gap-3 text-lg text-red-400 p-4 rounded-xl border border-red-400/50" style={{background: 'rgba(255, 0, 0, 0.1)'}}>
-                    <Frown className="w-6 h-6" />
-                    {error}
-                </motion.div>
-            )}
-            {ideas.length > 0 && (
-                <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {ideas.map((idea, index) => (
-                        <motion.div key={index} initial={{opacity: 0, y: 50}} animate={{opacity: 1, y: 0}} transition={{duration: 0.5, delay: index * 0.2}}>
-                             <Card className="h-full flex flex-col !p-0 overflow-hidden">
-                                <motion.div 
-                                    className="absolute top-0 left-0 w-full h-full pointer-events-none"
-                                    style={{
-                                        background: `linear-gradient(110deg, transparent 20%, ${palette.primary}33 50%, transparent 80%)`
-                                    }}
-                                    initial={{ x: "-150%" }}
-                                    animate={{ x: "150%" }}
-                                    transition={{ duration: 1.5, delay: index * 0.2 + 0.5, ease: "easeInOut" }}
-                                />
-                                <div className="p-6" style={{background: palette.primary}}>
-                                    <h3 className="text-2xl font-bold text-black drop-shadow-md">{idea.name}</h3>
-                                </div>
-                                <div className="p-6 flex-grow flex flex-col gap-6">
-                                    <div className="flex items-start gap-3">
-                                        <BookText className="w-6 h-6 mt-1 shrink-0" style={{color: palette.primary}}/>
-                                        <p style={{color: palette.textSecondary}}>{idea.description}</p>
-                                    </div>
-                                    <div>
-                                        <div className="flex items-center gap-3 font-semibold mb-2" style={{color: palette.textPrimary}}>
-                                          <FlaskConical className="w-6 h-6" style={{color: palette.primary}}/>
-                                          <span>طعم‌های پیشنهادی:</span>
-                                        </div>
-                                        <ul className="space-y-1 pr-9" style={{color: palette.textSecondary}}>
-                                            {idea.flavors.map((flavor, i) => <li key={i} className="flex items-center gap-2"><Sparkles className="w-4 h-4" style={{color: palette.primary}}/>{flavor}</li>)}
-                                        </ul>
-                                    </div>
-                                </div>
-                            </Card>
-                        </motion.div>
-                    ))}
-                </div>
-            )}
-        </AnimatePresence>
-    </Section>
-  );
 };
 
 const Services = () => {
@@ -1002,7 +884,6 @@ const PortfolioSite = () => {
             <Home />
             <About />
             <Portfolio />
-            <AIStudio />
             <Services />
             <Testimonials />
             <Contact />

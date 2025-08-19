@@ -1,11 +1,7 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import type { CakeIdea } from '../types';
 
-if (!process.env.API_KEY) {
-  console.warn("API_KEY environment variable not set. The AI Designer will be disabled.");
-}
-
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || "" });
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 const responseSchema = {
   type: Type.OBJECT,
@@ -37,10 +33,6 @@ const responseSchema = {
 };
 
 export const generateCakeIdeas = async (prompt: string): Promise<CakeIdea[]> => {
-  if (!process.env.API_KEY) {
-    throw new Error("کلید API تنظیم نشده است. قابلیت طراح هوشمند غیرفعال است.");
-  }
-
   try {
     const systemInstruction = `You are an expert cake designer AI assistant for a luxury cake brand named "کیک‌آرت" (Cake Art). Your goal is to help users brainstorm beautiful and unique cake ideas based on their preferences (occasion, style, color).
 Provide 2-3 distinct, creative, and appealing cake concepts.
