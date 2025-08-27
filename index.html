@@ -1,29 +1,587 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
-  <head>
-    <meta charset="UTF--8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+<head>
+    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>کیک آرت | استودیو طراحی کیک با هوش مصنوعی</title>
+    <title>کیک آرت | استودیو طراحی کیک</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎂</text></svg>">
+    
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-  <script type="importmap">
-{
-  "imports": {
-    "react/": "https://aistudiocdn.com/react@^19.1.1/",
-    "react": "https://aistudiocdn.com/react@^19.1.1",
-    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.542.0",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
-    "vite": "https://aistudiocdn.com/vite@^7.1.3",
-    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.0.1",
-    "framer-motion": "https://aistudiocdn.com/framer-motion@^12.23.12"
-  }
-}
-</script>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Vazirmatn', 'sans-serif'],
+            },
+          }
+        }
+      }
+    </script>
+
+    <!-- Custom Styles -->
+    <style>
+        :root {
+            --background: #121212;
+            --surface: #1E1E1E;
+            --primary: #D1B07E;
+            --text-primary: #FFFFFF;
+            --text-secondary: #A8A8A8;
+            --border: #333333;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Vazirmatn', 'sans-serif';
+            background-color: var(--background);
+            color: var(--text-primary);
+        }
+
+        /* Preloader Styles */
+        #preloader {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--background);
+            transition: opacity 0.8s ease-in-out;
+        }
+        #preloader svg text {
+            font-family: 'Vazirmatn', sans-serif;
+            font-size: 70px;
+            font-weight: bold;
+            text-anchor: middle;
+            stroke: var(--primary);
+            stroke-width: 1;
+            fill: transparent;
+            animation: fill-in 2s ease-out forwards 0.5s;
+        }
+        @keyframes fill-in {
+            from { fill: transparent; }
+            to { fill: var(--primary); }
+        }
+
+        /* Animated Gradient BG */
+        @keyframes subtle-gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .animated-gradient-bg {
+            position: fixed;
+            inset: 0;
+            z-index: -20;
+            background: linear-gradient(270deg, var(--background), #1a1a1a, var(--background));
+            background-size: 200% 200%;
+            animation: subtle-gradient 30s ease infinite;
+        }
+
+        /* Masonry Layout */
+        .masonry-grid {
+            column-count: 1;
+            column-gap: 2rem;
+        }
+        @media (min-width: 640px) { .masonry-grid { column-count: 2; } }
+        @media (min-width: 1024px) { .masonry-grid { column-count: 3; } }
+        .masonry-item {
+            break-inside: avoid;
+            margin-bottom: 2rem;
+        }
+
+        /* Floating Label Input */
+        .floating-label-group {
+            position: relative;
+        }
+        .floating-label-input {
+            padding-top: 1.5rem;
+            background-color: transparent;
+        }
+        .floating-label {
+            position: absolute;
+            top: 1rem;
+            right: 0.75rem;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            pointer-events: none;
+            transform-origin: right;
+            color: var(--text-secondary);
+        }
+        .floating-label-input:focus ~ .floating-label,
+        .floating-label-input:not(:placeholder-shown) ~ .floating-label {
+            transform: translateY(-0.85rem) scale(0.85);
+            color: var(--primary);
+        }
+        
+        /* Scroll Animations */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .animate-on-scroll.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Active Nav Link Indicator */
+        .nav-link-indicator {
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+    </style>
 </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
-  </body>
+<body class="bg-[#121212]">
+    <!-- Preloader -->
+    <div id="preloader">
+      <svg width="250" height="120" viewBox="0 0 250 120">
+        <text x="50%" y="50%" dy=".35em">کیک‌آرت</text>
+      </svg>
+    </div>
+
+    <!-- Background -->
+    <div class="animated-gradient-bg"></div>
+
+    <!-- Header -->
+    <header id="header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+        <nav class="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 h-20 relative">
+            <a href="#home" class="flex items-center gap-3 group">
+                <div class="text-4xl transition-transform duration-300 group-hover:scale-110 group-hover:rotate-[-12deg]" style="filter: drop-shadow(0 0 6px var(--primary));">🎂</div>
+                <span class="text-2xl font-bold tracking-tight bg-clip-text text-transparent" style="background-image: linear-gradient(to right, var(--primary), #EAEAEA);">کیک‌آرت</span>
+            </a>
+            <div id="desktop-nav-links" class="hidden md:flex items-center gap-x-1 relative">
+                <a href="#home" class="nav-link px-4 py-2 rounded-lg text-sm font-semibold transition-colors text-white">خانه</a>
+                <a href="#about" class="nav-link px-4 py-2 rounded-lg text-sm font-semibold transition-colors text-white">درباره من</a>
+                <a href="#portfolio" class="nav-link px-4 py-2 rounded-lg text-sm font-semibold transition-colors text-white">نمونه کارها</a>
+                <a href="#services" class="nav-link px-4 py-2 rounded-lg text-sm font-semibold transition-colors text-white">خدمات</a>
+                <a href="#contact" class="nav-link px-4 py-2 rounded-lg text-sm font-semibold transition-colors text-white">تماس با ما</a>
+                <div id="nav-indicator" class="nav-link-indicator"></div>
+            </div>
+            <div class="md:hidden">
+                <button id="menu-toggle" aria-label="Open menu">
+                    <svg id="menu-icon-open" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg>
+                    <svg id="menu-icon-close" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white hidden"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden overflow-hidden transition-all duration-300 bg-[#1E1E1E] border-b border-[#333333]">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#home" class="block px-3 py-2 rounded-md text-base font-medium text-white">خانه</a>
+                <a href="#about" class="block px-3 py-2 rounded-md text-base font-medium text-white">درباره من</a>
+                <a href="#portfolio" class="block px-3 py-2 rounded-md text-base font-medium text-white">نمونه کارها</a>
+                <a href="#services" class="block px-3 py-2 rounded-md text-base font-medium text-white">خدمات</a>
+                <a href="#contact" class="block px-3 py-2 rounded-md text-base font-medium text-white">تماس با ما</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Home Section -->
+        <section id="home" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24 min-h-screen flex items-center pt-32 md:pt-20">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-y-12 md:gap-x-16 items-center">
+                <div class="text-center md:text-right animate-on-scroll">
+                    <h1 class="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-white">کیک‌آرت فرزین</h1>
+                    <h2 class="mt-4 text-2xl md:text-3xl font-bold bg-clip-text text-transparent" style="background-image: linear-gradient(to left, var(--primary), var(--text-secondary));">هنر کیک، با الهام از رویاها</h2>
+                    <p class="mt-6 text-lg leading-relaxed max-w-xl mx-auto md:mx-0 text-[#A8A8A8]">من فرزین هستم، هنرمند و طراح کیک‌های سفارشی. هر کیک، داستانی است از طعم و زیبایی که برای شیرین‌تر کردن لحظات خاص شما خلق می‌شود.</p>
+                    <a href="#portfolio" class="mt-10 inline-flex items-center gap-3 px-10 py-4 rounded-full text-lg font-bold shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl" style="background: var(--primary); color: var(--background); box-shadow: 0 8px 15px -4px #D1B07E44;">
+                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.685a.5.5 0 0 0-.58 0l-3.58 2.685a.5.5 0 0 1-.81-.47L9.523 12.89l-3.182-2.47a.5.5 0 0 1 .134-.839l4.118-1.362a.5.5 0 0 0 .44-.242l2.356-3.974a.5.5 0 0 1 .862 0l2.356 3.974a.5.5 0 0 0 .44.242l4.118 1.362a.5.5 0 0 1 .134.839Z"></path></svg>
+                        نمونه کارهای من را ببینید
+                    </a>
+                </div>
+                <div class="flex justify-center items-center animate-on-scroll" style="transition-delay: 200ms;">
+                    <div class="relative w-full max-w-sm sm:max-w-md lg:max-w-lg aspect-square rounded-2xl overflow-hidden" style="filter: drop-shadow(0px 25px 50px rgba(0, 0, 0, 0.5));">
+                        <img src="https://raw.githubusercontent.com/user-attachments/assets/e167c9d9-7603-4f93-a62c-da6e5d263309" alt="کیک هنری" class="w-full h-full object-cover object-center">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                <div class="animate-on-scroll">
+                    <img src="https://raw.githubusercontent.com/user-attachments/assets/382e75e1-5503-40a2-a7d0-9993e3d99e52" alt="فرزین، هنرمند کیک" class="rounded-xl object-cover w-full h-full shadow-2xl shadow-black/30">
+                </div>
+                <div class="animate-on-scroll" style="transition-delay: 200ms;">
+                    <h2 class="text-4xl font-extrabold mb-4 text-white">درباره من</h2>
+                    <h3 class="text-2xl font-bold bg-clip-text text-transparent mb-6" style="background-image: linear-gradient(to right, var(--primary), var(--text-secondary));">فرزین، معمار رویاهای شیرین</h3>
+                    <p class="leading-relaxed mb-4 text-[#A8A8A8]">سلام! من فرزین هستم، هنرمندی که بوم نقاشی‌اش، کیک و رنگ‌هایش، طعم‌های رویایی است. از کودکی به هنر و شیرینی‌پزی علاقه داشتم و همیشه آرزو داشتم بتوانم زیبایی و طعم را با هم ترکیب کنم. امروز، این رویا را در قالب کیک‌های هنری و سفارشی به واقعیت تبدیل می‌کنم.</p>
+                    <p class="leading-relaxed text-[#A8A8A8]">هر کیک برای من یک اثر هنری منحصر به فرد است. با استفاده از بهترین مواد اولیه و تکنیک‌های خلاقانه، آثاری خلق می‌کنم که نه تنها چشم‌ها را خیره می‌کنند، بلکه ذائقه شما را نیز به یک تجربه به‌یادماندنی دعوت می‌کنند.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Portfolio Section -->
+        <section id="portfolio" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24">
+             <div class="text-center mb-16 animate-on-scroll">
+                <div class="inline-flex items-center justify-center p-3 rounded-full border-2 mb-4 border-[#D1B07E]">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#D1B07E]"><path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.685a.5.5 0 0 0-.58 0l-3.58 2.685a.5.5 0 0 1-.81-.47L9.523 12.89l-3.182-2.47a.5.5 0 0 1 .134-.839l4.118-1.362a.5.5 0 0 0 .44-.242l2.356-3.974a.5.5 0 0 1 .862 0l2.356 3.974a.5.5 0 0 0 .44.242l4.118 1.362a.5.5 0 0 1 .134.839Z"></path></svg>
+                </div>
+                <h2 class="text-4xl md:text-5xl font-black tracking-tight text-white">نمونه کارهای من</h2>
+                <p class="mt-4 max-w-2xl mx-auto text-lg text-[#A8A8A8]">گالری از کیک‌های هنری و خاص</p>
+            </div>
+            <div class="flex justify-center flex-wrap gap-3 mb-12 animate-on-scroll">
+                <button class="filter-btn rounded-full px-5 py-2.5 text-sm font-semibold transition-all duration-300 selected" data-filter="همه">همه</button>
+                <button class="filter-btn rounded-full px-5 py-2.5 text-sm font-semibold transition-all duration-300" data-filter="تولد">تولد</button>
+                <button class="filter-btn rounded-full px-5 py-2.5 text-sm font-semibold transition-all duration-300" data-filter="عروسی">عروسی</button>
+                <button class="filter-btn rounded-full px-5 py-2.5 text-sm font-semibold transition-all duration-300" data-filter="هنری">هنری</button>
+                <button class="filter-btn rounded-full px-5 py-2.5 text-sm font-semibold transition-all duration-300" data-filter="کلاسیک">کلاسیک</button>
+                <button class="filter-btn rounded-full px-5 py-2.5 text-sm font-semibold transition-all duration-300" data-filter="نامزدی">نامزدی</button>
+                 <button class="filter-btn rounded-full px-5 py-2.5 text-sm font-semibold transition-all duration-300" data-filter="جشن ویژه">جشن ویژه</button>
+            </div>
+            <div class="masonry-grid">
+                <div class="gallery-item masonry-item animate-on-scroll" data-tag="تولد">
+                    <div class="rounded-xl p-0 relative overflow-hidden border bg-[#1E1E1E] border-[#333333] transition-all duration-300 hover:-translate-y-1 hover:border-[#D1B07E] group cursor-pointer">
+                        <div class="overflow-hidden rounded-t-xl relative"><img src="https://raw.githubusercontent.com/user-attachments/assets/d1933e14-e298-4c3e-ad91-032876ccb6b7" alt="غرق در شکلات" class="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500"></div>
+                        <div class="p-5"><h3 class="text-xl font-bold text-white">غرق در شکلات</h3><span class="text-sm font-semibold mt-1 inline-block px-3 py-1 rounded-full text-black bg-[#D1B07E]">تولد</span></div>
+                    </div>
+                </div>
+                <div class="gallery-item masonry-item animate-on-scroll" data-tag="عروسی">
+                    <div class="rounded-xl p-0 relative overflow-hidden border bg-[#1E1E1E] border-[#333333] transition-all duration-300 hover:-translate-y-1 hover:border-[#D1B07E] group cursor-pointer">
+                        <div class="overflow-hidden rounded-t-xl relative"><img src="https://raw.githubusercontent.com/user-attachments/assets/b8398e28-1b03-455b-9721-e945c755a5b1" alt="ورق طلا" class="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500"></div>
+                        <div class="p-5"><h3 class="text-xl font-bold text-white">ورق طلا</h3><span class="text-sm font-semibold mt-1 inline-block px-3 py-1 rounded-full text-black bg-[#D1B07E]">عروسی</span></div>
+                    </div>
+                </div>
+                 <div class="gallery-item masonry-item animate-on-scroll" data-tag="هنری">
+                    <div class="rounded-xl p-0 relative overflow-hidden border bg-[#1E1E1E] border-[#333333] transition-all duration-300 hover:-translate-y-1 hover:border-[#D1B07E] group cursor-pointer">
+                        <div class="overflow-hidden rounded-t-xl relative"><img src="https://raw.githubusercontent.com/user-attachments/assets/2f165181-e2a2-4a0b-8d34-77a8731cd9a2" alt="سیاره آبرنگی" class="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500"></div>
+                        <div class="p-5"><h3 class="text-xl font-bold text-white">سیاره آبرنگی</h3><span class="text-sm font-semibold mt-1 inline-block px-3 py-1 rounded-full text-black bg-[#D1B07E]">هنری</span></div>
+                    </div>
+                </div>
+                 <div class="gallery-item masonry-item animate-on-scroll" data-tag="کلاسیک">
+                    <div class="rounded-xl p-0 relative overflow-hidden border bg-[#1E1E1E] border-[#333333] transition-all duration-300 hover:-translate-y-1 hover:border-[#D1B07E] group cursor-pointer">
+                        <div class="overflow-hidden rounded-t-xl relative"><img src="https://raw.githubusercontent.com/user-attachments/assets/3b3ab609-b68f-4ed1-8d08-013620986616" alt="مخمل سرخ" class="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500"></div>
+                        <div class="p-5"><h3 class="text-xl font-bold text-white">مخمل سرخ</h3><span class="text-sm font-semibold mt-1 inline-block px-3 py-1 rounded-full text-black bg-[#D1B07E]">کلاسیک</span></div>
+                    </div>
+                </div>
+                 <div class="gallery-item masonry-item animate-on-scroll" data-tag="نامزدی">
+                    <div class="rounded-xl p-0 relative overflow-hidden border bg-[#1E1E1E] border-[#333333] transition-all duration-300 hover:-translate-y-1 hover:border-[#D1B07E] group cursor-pointer">
+                        <div class="overflow-hidden rounded-t-xl relative"><img src="https://raw.githubusercontent.com/user-attachments/assets/a29633e1-d28c-4876-b6b9-3893a748c908" alt="انجیر و خامه" class="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500"></div>
+                        <div class="p-5"><h3 class="text-xl font-bold text-white">انجیر و خامه</h3><span class="text-sm font-semibold mt-1 inline-block px-3 py-1 rounded-full text-black bg-[#D1B07E]">نامزدی</span></div>
+                    </div>
+                </div>
+                <div class="gallery-item masonry-item animate-on-scroll" data-tag="جشن ویژه">
+                    <div class="rounded-xl p-0 relative overflow-hidden border bg-[#1E1E1E] border-[#333333] transition-all duration-300 hover:-translate-y-1 hover:border-[#D1B07E] group cursor-pointer">
+                        <div class="overflow-hidden rounded-t-xl relative"><img src="https://raw.githubusercontent.com/user-attachments/assets/75267252-0925-4a57-b089-a20bb3f6696d" alt="شب طلایی" class="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500"></div>
+                        <div class="p-5"><h3 class="text-xl font-bold text-white">شب طلایی</h3><span class="text-sm font-semibold mt-1 inline-block px-3 py-1 rounded-full text-black bg-[#D1B07E]">جشن ویژه</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24">
+            <div class="text-center mb-16 animate-on-scroll">
+                 <div class="inline-flex items-center justify-center p-3 rounded-full border-2 mb-4 border-[#D1B07E]">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#D1B07E]"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M8 12h8"></path><path d="M12 12V2.42c0-.55-.45-1-1-1h-2c-.55 0-1 .45-1 1V12"></path></svg>
+                </div>
+                <h2 class="text-4xl md:text-5xl font-black tracking-tight text-white">خدمات کیک سفارشی</h2>
+                <p class="mt-4 max-w-2xl mx-auto text-lg text-[#A8A8A8]">سرویس‌هایی برای تبدیل رویاهای شما به واقعیت‌های شیرین</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="animate-on-scroll">
+                    <div class="h-full flex flex-col text-center rounded-xl p-6 relative overflow-hidden border bg-[#1E1E1E] border-[#333333] transition-all duration-300 hover:-translate-y-1 hover:border-[#D1B07E]">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-12 h-12 mx-auto text-[#D1B07E]"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M8 12h8"></path><path d="M12 12V2.42c0-.55-.45-1-1-1h-2c-.55 0-1 .45-1 1V12"></path></svg>
+                        <h3 class="text-2xl font-bold mt-6 mb-2 text-white">کیک‌های سفارشی</h3>
+                        <p class="text-lg font-semibold mb-6 text-[#D1B07E]">شروع از ۵ میلیون</p>
+                        <ul class="space-y-3 flex-grow text-right text-[#A8A8A8]">
+                           <li class="flex items-start gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mt-1 shrink-0 text-[#D1B07E]"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>طراحی منحصر به فرد با توجه به سلیقه شما</span></li>
+                           <li class="flex items-start gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mt-1 shrink-0 text-[#D1B07E]"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>برای تولدها و جشن‌های خاص</span></li>
+                           <li class="flex items-start gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mt-1 shrink-0 text-[#D1B07E]"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>مشاوره برای خلق طعم‌های جدید</span></li>
+                        </ul>
+                        <a href="#contact" class="mt-8 inline-block px-8 py-3 rounded-full text-md font-bold transition-all duration-300 hover:scale-105 hover:bg-[#D1B07E] hover:text-[#121212]" style="border: 1px solid var(--primary); color: var(--primary);">مشاوره و سفارش</a>
+                    </div>
+                </div>
+                 <div class="animate-on-scroll" style="transition-delay: 200ms;">
+                    <div class="h-full flex flex-col text-center rounded-xl p-6 relative overflow-hidden border bg-[#1E1E1E] border-[#333333] transition-all duration-300 hover:-translate-y-1 hover:border-[#D1B07E]">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-12 h-12 mx-auto text-[#D1B07E]"><path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.685a.5.5 0 0 0-.58 0l-3.58 2.685a.5.5 0 0 1-.81-.47L9.523 12.89l-3.182-2.47a.5.5 0 0 1 .134-.839l4.118-1.362a.5.5 0 0 0 .44-.242l2.356-3.974a.5.5 0 0 1 .862 0l2.356 3.974a.5.5 0 0 0 .44.242l4.118 1.362a.5.5 0 0 1 .134-.839Z"></path></svg>
+                        <h3 class="text-2xl font-bold mt-6 mb-2 text-white">کیک‌های عروسی</h3>
+                        <p class="text-lg font-semibold mb-6 text-[#D1B07E]">شروع از ۱۸ میلیون</p>
+                        <ul class="space-y-3 flex-grow text-right text-[#A8A8A8]">
+                           <li class="flex items-start gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mt-1 shrink-0 text-[#D1B07E]"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>کیک‌های طبقاتی مجلل و هنری</span></li>
+                           <li class="flex items-start gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mt-1 shrink-0 text-[#D1B07E]"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>کریستال‌های شکری دست‌ساز</span></li>
+                           <li class="flex items-start gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mt-1 shrink-0 text-[#D1B07E]"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>هماهنگ با تم مراسم شما</span></li>
+                        </ul>
+                        <a href="#contact" class="mt-8 inline-block px-8 py-3 rounded-full text-md font-bold transition-all duration-300 hover:scale-105 hover:bg-[#D1B07E] hover:text-[#121212]" style="border: 1px solid var(--primary); color: var(--primary);">مشاوره و سفارش</a>
+                    </div>
+                </div>
+                 <div class="animate-on-scroll" style="transition-delay: 400ms;">
+                    <div class="h-full flex flex-col text-center rounded-xl p-6 relative overflow-hidden border bg-[#1E1E1E] border-[#333333] transition-all duration-300 hover:-translate-y-1 hover:border-[#D1B07E]">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-12 h-12 mx-auto text-[#D1B07E]"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
+                        <h3 class="text-2xl font-bold mt-6 mb-2 text-white">پکیج دسر</h3>
+                        <p class="text-lg font-semibold mb-6 text-[#D1B07E]">شروع از ۴ میلیون</p>
+                        <ul class="space-y-3 flex-grow text-right text-[#A8A8A8]">
+                           <li class="flex items-start gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mt-1 shrink-0 text-[#D1B07E]"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>انواع کاپ‌کیک و دسر برای تکمیل مراسم شما</span></li>
+                           <li class="flex items-start gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mt-1 shrink-0 text-[#D1B07E]"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>مناسب برای مهمانی‌ها و رویدادها</span></li>
+                           <li class="flex items-start gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 mt-1 shrink-0 text-[#D1B07E]"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>حداقل سفارش ۲۰ عدد</span></li>
+                        </ul>
+                        <a href="#contact" class="mt-8 inline-block px-8 py-3 rounded-full text-md font-bold transition-all duration-300 hover:scale-105 hover:bg-[#D1B07E] hover:text-[#121212]" style="border: 1px solid var(--primary); color: var(--primary);">مشاوره و سفارش</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section id="testimonials" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24">
+             <div class="text-center mb-16 animate-on-scroll">
+                 <div class="inline-flex items-center justify-center p-3 rounded-full border-2 mb-4 border-[#D1B07E]">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#D1B07E]"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
+                </div>
+                <h2 class="text-4xl md:text-5xl font-black tracking-tight text-white">نظرات مشتریان</h2>
+                <p class="mt-4 max-w-2xl mx-auto text-lg text-[#A8A8A8]">آنچه مشتریان عزیز درباره ما می‌گویند</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="animate-on-scroll"><div class="h-full flex flex-col justify-between rounded-xl p-6 relative overflow-hidden border bg-[#1E1E1E] border-[#333333] transition-all duration-300 hover:-translate-y-1 hover:border-[#D1B07E]"><p class="italic mb-4 text-[#A8A8A8]">"کیک عروسی ما یک اثر هنری واقعی بود! هم زیبا و هم فوق‌العاده خوش‌طعم. ممنون از فرزین عزیز."</p><div class="mt-4 pt-4 border-t border-[#333333]"><p class="font-bold text-white">هدی و کامران</p><p class="text-sm text-[#D1B07E]">مشتری عروسی</p></div></div></div>
+                <div class="animate-on-scroll" style="transition-delay: 200ms;"><div class="h-full flex flex-col justify-between rounded-xl p-6 relative overflow-hidden border bg-[#1E1E1E] border-[#333333] transition-all duration-300 hover:-translate-y-1 hover:border-[#D1B07E]"><p class="italic mb-4 text-[#A8A8A8]">"طراحی کیک برای رویداد شرکتی ما بی‌نظیر بود و همه همکاران را تحت تاثیر قرار داد. کاملا حرفه‌ای و دقیق."</p><div class="mt-4 pt-4 border-t border-[#333333]"><p class="font-bold text-white">شرکت پردیس</p><p class="text-sm text-[#D1B07E]">مشتری شرکتی</p></div></div></div>
+                <div class="animate-on-scroll" style="transition-delay: 400ms;"><div class="h-full flex flex-col justify-between rounded-xl p-6 relative overflow-hidden border bg-[#1E1E1E] border-[#333333] transition-all duration-300 hover:-translate-y-1 hover:border-[#D1B07E]"><p class="italic mb-4 text-[#A8A8A8]">"طعم کیک‌هاشون واقعا عالیه! خلاقیت و کیفیت در بالاترین سطح ممکن. همیشه برای مناسبت‌هام بهشون سفارش میدم."</p><div class="mt-4 pt-4 border-t border-[#333333]"><p class="font-bold text-white">نازنین</p><p class="text-sm text-[#D1B07E]">مشتری تولد</p></div></div></div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24">
+             <div class="text-center mb-16 animate-on-scroll">
+                <div class="inline-flex items-center justify-center p-3 rounded-full border-2 mb-4 border-[#D1B07E]">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#D1B07E]"><path d="m22 2-7 20-4-9-9-4Z"></path><path d="M22 2 11 13"></path></svg>
+                </div>
+                <h2 class="text-4xl md:text-5xl font-black tracking-tight text-white">تماس با ما</h2>
+                <p class="mt-4 max-w-2xl mx-auto text-lg text-[#A8A8A8]">برای مشاوره و ثبت سفارش، با من در ارتباط باشید</p>
+            </div>
+            <div class="animate-on-scroll">
+                <div class="rounded-xl p-6 relative overflow-hidden border bg-[#1E1E1E] border-[#333333]">
+                    <form id="contact-form" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="floating-label-group"><input type="text" name="name" required placeholder=" " class="w-full bg-transparent border-2 focus:ring-0 transition-colors outline-none p-3 rounded-xl floating-label-input" style="border-color: var(--border); color: var(--text-primary);"><label class="floating-label">نام شما</label></div>
+                            <div class="floating-label-group"><input type="email" name="email" required placeholder=" " class="w-full bg-transparent border-2 focus:ring-0 transition-colors outline-none p-3 rounded-xl floating-label-input" style="border-color: var(--border); color: var(--text-primary);"><label class="floating-label">ایمیل شما</label></div>
+                        </div>
+                        <div>
+                            <div class="floating-label-group"><textarea name="message" required rows="4" placeholder=" " class="w-full bg-transparent border-2 focus:ring-0 transition-colors outline-none p-3 rounded-xl floating-label-input" style="border-color: var(--border); color: var(--text-primary);"></textarea><label class="floating-label">پیام شما (نوع مراسم، تعداد مهمانان و...)</label></div>
+                        </div>
+                        <div class="text-center"><button type="submit" class="px-12 py-4 rounded-full text-lg font-bold shadow-lg transition-all duration-300 hover:scale-105" style="background: var(--primary); color: var(--background);">ارسال پیام</button></div>
+                        <p id="form-status" class="text-center mt-4 h-6"></p>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full bg-[#1E1E1E] border-t border-[#333333]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-white">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-right">
+                <div class="flex flex-col items-center md:items-start"><div class="flex items-center gap-2 mb-2"><span class="text-2xl">🎂</span><h3 class="font-bold text-xl">کیک‌آرت</h3></div><p class="text-[#A8A8A8]">خلق طعم‌های رویایی، با عشق</p></div>
+                <div class="flex flex-col items-center md:items-start"><h4 class="font-bold text-lg mb-2">لینک‌های سریع</h4><a href="#about" class="transition-opacity hover:opacity-75 mt-1 text-[#A8A8A8]">درباره من</a><a href="#portfolio" class="transition-opacity hover:opacity-75 mt-1 text-[#A8A8A8]">نمونه کارها</a><a href="#services" class="transition-opacity hover:opacity-75 mt-1 text-[#A8A8A8]">خدمات</a></div>
+                <div class="flex flex-col items-center md:items-start"><h4 class="font-bold text-lg mb-2">ارتباط با من</h4><div class="flex gap-4 justify-center md:justify-start"><a href="#" class="text-[#A8A8A8] transition-colors hover:text-[#D1B07E]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line></svg></a><a href="tel:+" class="text-[#A8A8A8] transition-colors hover:text-[#D1B07E]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></a><a href="mailto:" class="text-[#A8A8A8] transition-colors hover:text-[#D1B07E]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg></a></div></div>
+            </div>
+            <div class="mt-12 pt-8 border-t text-center text-sm border-[#333333] text-[#A8A8A8]"><p>&copy; <span id="current-year"></span> کیک‌آرت. تمام حقوق محفوظ است.</p></div>
+        </div>
+    </footer>
+    
+    <!-- Lightbox -->
+    <div id="lightbox" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+        <img id="lightbox-img" src="" class="max-w-[90vw] max-h-[90vh] object-contain rounded-xl shadow-2xl transition-transform duration-300 scale-95">
+        <button id="lightbox-close" class="absolute top-6 right-6 text-white bg-black/50 rounded-full p-2 transition-transform duration-300 hover:scale-110 hover:rotate-90">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+    </div>
+
+    <!-- Vanilla JavaScript -->
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        // --- PRELOADER ---
+        const preloader = document.getElementById('preloader');
+        setTimeout(() => {
+            if(preloader) {
+              preloader.style.opacity = '0';
+              setTimeout(() => preloader.style.display = 'none', 800);
+            }
+        }, 2500);
+
+        // --- HEADER LOGIC ---
+        const header = document.getElementById('header');
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuIconOpen = document.getElementById('menu-icon-open');
+        const menuIconClose = document.getElementById('menu-icon-close');
+        
+        // Scrolled header
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 10) {
+                header.style.background = 'rgba(30, 30, 30, 0.9)';
+                header.style.backdropFilter = 'blur(10px)';
+                header.style.webkitBackdropFilter = 'blur(10px)';
+                header.style.borderBottom = '1px solid var(--border)';
+            } else {
+                header.style.background = 'transparent';
+                header.style.backdropFilter = 'none';
+                header.style.webkitBackdropFilter = 'none';
+                header.style.borderBottom = 'none';
+            }
+        });
+
+        // Mobile menu toggle
+        menuToggle.addEventListener('click', () => {
+            const isOpen = !mobileMenu.classList.contains('hidden');
+            mobileMenu.classList.toggle('hidden');
+            menuIconOpen.classList.toggle('hidden');
+            menuIconClose.classList.toggle('hidden');
+        });
+        
+        // Close mobile menu on link click
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                menuIconOpen.classList.remove('hidden');
+                menuIconClose.classList.add('hidden');
+            });
+        });
+
+        // --- ACTIVE SECTION HIGHLIGHTING ---
+        const sections = document.querySelectorAll('main section');
+        const navLinks = document.querySelectorAll('#desktop-nav-links .nav-link');
+        const indicator = document.getElementById('nav-indicator');
+
+        const observerOptions = { rootMargin: '-30% 0px -70% 0px' };
+
+        const sectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const activeId = entry.target.id;
+                    navLinks.forEach(link => {
+                        if (link.getAttribute('href') === `#${activeId}`) {
+                            const linkRect = link.getBoundingClientRect();
+                            const parentRect = link.parentElement.getBoundingClientRect();
+                            indicator.style.width = `${linkRect.width}px`;
+                            indicator.style.left = `${linkRect.left - parentRect.left}px`;
+
+                            // For mobile menu active state
+                             document.querySelectorAll('#mobile-menu a').forEach(mobileLink => {
+                                if (mobileLink.getAttribute('href') === `#${activeId}`) {
+                                    mobileLink.style.backgroundColor = 'var(--border)';
+                                } else {
+                                    mobileLink.style.backgroundColor = 'transparent';
+                                }
+                             });
+                        }
+                    });
+                }
+            });
+        }, observerOptions);
+
+        sections.forEach(section => sectionObserver.observe(section));
+
+        // --- PORTFOLIO FILTER ---
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const galleryItems = document.querySelectorAll('.gallery-item');
+
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const filter = button.dataset.filter;
+                
+                // Style buttons
+                filterButtons.forEach(btn => {
+                   btn.classList.remove('selected');
+                   btn.style.background = 'transparent';
+                   btn.style.color = 'var(--text-primary)';
+                   btn.style.border = '1px solid var(--border)';
+                });
+                button.classList.add('selected');
+                button.style.background = 'var(--primary)';
+                button.style.color = 'var(--background)';
+                button.style.border = '1px solid var(--primary)';
+                
+                // Filter items
+                galleryItems.forEach(item => {
+                    if (filter === 'همه' || item.dataset.tag === filter) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+        // Set initial state for the first filter button
+        document.querySelector('.filter-btn[data-filter="همه"]').click();
+
+
+        // --- LIGHTBOX ---
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const lightboxClose = document.getElementById('lightbox-close');
+        
+        document.querySelectorAll('.gallery-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const imgSrc = item.querySelector('img').src;
+                lightboxImg.src = imgSrc;
+                lightbox.classList.remove('opacity-0', 'pointer-events-none');
+                lightboxImg.classList.remove('scale-95');
+            });
+        });
+
+        const closeLightbox = () => {
+            lightbox.classList.add('opacity-0', 'pointer-events-none');
+            lightboxImg.classList.add('scale-95');
+        };
+        
+        lightboxClose.addEventListener('click', closeLightbox);
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+
+        // --- CONTACT FORM ---
+        const contactForm = document.getElementById('contact-form');
+        const formStatus = document.getElementById('form-status');
+        
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            formStatus.textContent = 'در حال ارسال...';
+            formStatus.style.color = 'var(--text-secondary)';
+            
+            setTimeout(() => {
+                contactForm.reset();
+                formStatus.textContent = 'پیام شما با موفقیت ارسال شد!';
+                formStatus.style.color = 'var(--primary)';
+                setTimeout(() => formStatus.textContent = '', 5000);
+            }, 1500);
+        });
+
+        // --- SCROLL ANIMATIONS ---
+        const animatedElements = document.querySelectorAll('.animate-on-scroll');
+        const scrollObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    scrollObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        animatedElements.forEach(el => scrollObserver.observe(el));
+        
+        // --- FLOATING LABELS FOCUS/BLUR ---
+        document.querySelectorAll('.floating-label-input').forEach(input => {
+            input.addEventListener('focus', (e) => e.target.style.borderColor = 'var(--primary)');
+            input.addEventListener('blur', (e) => e.target.style.borderColor = 'var(--border)');
+        });
+
+        // --- FOOTER YEAR ---
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+      });
+    </script>
+</body>
 </html>
