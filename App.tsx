@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
 import { Phone, Instagram, Mail, Star, Sparkles, Loader, Award, Trophy, Heart, Send, Menu, X, Quote, Lock, Trash2, PlusCircle, Copy, Check } from "lucide-react";
-import type { NavLinkItem, GalleryItem, ServiceItem, TestimonialItem } from './types.ts';
+import { NavLinkItem, GalleryItem, ServiceItem, TestimonialItem } from './types.ts';
 import { palette, navLinks, galleryItems, serviceItems, testimonialItems, imagePaths } from './constants.ts';
 
 // --- STYLES, ANIMATIONS & HOOKS ---

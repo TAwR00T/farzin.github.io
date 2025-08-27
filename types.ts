@@ -21,9 +21,3 @@ export interface TestimonialItem {
   text: string;
   role: string;
 }
-
-export interface CakeIdea {
-  name: string;
-  description: string;
-  flavors: string[];
-}
