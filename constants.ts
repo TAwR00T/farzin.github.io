@@ -1,4 +1,4 @@
-import { NavLinkItem, GalleryItem, ServiceItem, TestimonialItem } from './types.ts';
+import type { NavLinkItem, GalleryItem, ServiceItem, TestimonialItem } from './types';
 
 export const palette = {
   background: "#121212",      // Deep Charcoal
